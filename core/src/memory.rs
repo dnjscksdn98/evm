@@ -120,6 +120,9 @@ impl Memory {
 		}
 
 		if self.data.len() < offset + target_size {
+			self.data
+				.try_reserve(offset + target_size - self.data.len())
+				.map_err(|_| ExitFatal::Other(alloc::borrow::Cow::Borrowed("out of memory")))?;
 			self.data.resize(offset + target_size, 0);
 		}
 
